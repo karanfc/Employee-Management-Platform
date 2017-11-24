@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <TextView
+               android:text="Start Date Correction"
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:layout_height="wrap_content"
+               android:id="@+id/notificationTitle"
+               android:textSize="16sp"
+               android:layout_marginTop="16dp"
+               android:layout_marginLeft="8dp"
+               android:layout_marginRight="8dp"
+               android:layout_marginBottom="8dp"
+               android:textColor="#000"/>
+
+
+           <TextView
+               android:text="28.09.17 (20:03)"
+               android:layout_weight="0.6"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:id="@+id/timeStamp"
+               android:textAllCaps="false"
+               android:textSize="16sp"
+               android:layout_marginTop="16dp"
+               android:layout_marginLeft="8dp"
+               android:layout_marginRight="8dp"
+               android:layout_marginBottom="8dp"
+               android:textColor="#000"/>
+
+
+
+       </LinearLayout>
+
+
+       <TextView
+           android:id="@+id/description"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Your request of start date correction for engagement XYZ has been approved"
+           android:textAlignment="viewStart"
+           android:textSize="14sp"
+           android:layout_marginTop="12dp"
+           android:layout_marginLeft="8dp"
+           android:layout_marginRight="8dp"
+           android:layout_marginBottom="32dp" />
+
+
+
+
+
+
+   </LinearLayout>
+</android.support.v7.widget.CardView>

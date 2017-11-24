@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/menu_engagement"
+        android:title="Engagements"
+        android:icon="@drawable/ic_action_engagements"
+        />
+
+    <item
+        android:id="@+id/menu_notifications"
+        android:title="Notifications"
+        android:icon="@drawable/ic_action_notif"
+        />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help"
+        android:icon="@drawable/ic_action_help" />
+
+    <item
+        android:id="@+id/menu_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_action_profile" />
+
+
+</menu>
