@@ -163,18 +163,38 @@ public class PendingFragment extends Fragment {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Log.e("Error",e.toString());
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                responseString = response.body().string();
-                Log.e("Pending",responseString);
 
+                responseString = response.body().string();
+
+                Log.e("Pending",responseString);
+                Log.e("Code pending",String.valueOf(response.code()));
+
+                if(String.valueOf(response.code()).equals("204"))
+                {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            progressBar.setVisibility(View.GONE);
+                            Pendingdata.clear();
+                            mAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+
+                else
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
                             try {
+
                                 JSONArray allotments = new JSONArray(responseString);
                                 for (int i = 0; i < allotments.length(); i++) {
                                     JSONObject allotmentObj = allotments.getJSONObject(i);
@@ -185,24 +205,23 @@ public class PendingFragment extends Fragment {
                                     engagementData.EndDate = allotmentObj.getString("EndDate");
                                     engagementData.ClientLocation = allotmentObj.getString("CurrentLocation");
                                     engagementData.allocDate = allotmentObj.getString("AllocationDate");
-                                    engagementData.status = allotmentObj.getString("Status");
                                     engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
+                                    engagementData.status = allotmentObj.getString("Status");
                                     engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
-
                                     Pendingdata.add(engagementData);
                                 }
+
+                                progressBar.setVisibility(View.GONE);
+                                mAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                            progressBar.setVisibility(View.GONE);
-                            mAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
                         }
                     });
-
-
+                }
             }
         });
     }

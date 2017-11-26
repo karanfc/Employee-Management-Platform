@@ -166,6 +166,7 @@ public class TodayFragment extends Fragment {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("Error",e.toString());
 
             }
 
@@ -175,41 +176,58 @@ public class TodayFragment extends Fragment {
                 responseString = response.body().string();
 
                 Log.e("Today",responseString);
-                Log.e("code",String.valueOf(response.code()));
+                Log.e("Code today",String.valueOf(response.code()));
 
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-
-                            JSONArray allotments = new JSONArray(responseString);
-                            for (int i = 0; i < allotments.length(); i++) {
-                                JSONObject allotmentObj = allotments.getJSONObject(i);
-                                EngagementData engagementData = new EngagementData();
-                                engagementData.ClientName = allotmentObj.getString("ClientName");
-                                engagementData.EngagementTitle = allotmentObj.getString("EngagementName");
-                                engagementData.StartDate = allotmentObj.getString("StartDate");
-                                engagementData.EndDate = allotmentObj.getString("EndDate");
-                                engagementData.ClientLocation = allotmentObj.getString("CurrentLocation");
-                                engagementData.allocDate = allotmentObj.getString("AllocationDate");
-                                engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
-                                engagementData.status = allotmentObj.getString("Status");
-                                engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
-                                todaysData.add(engagementData);
-                            }
-
+                if(String.valueOf(response.code()).equals("204"))
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             progressBar.setVisibility(View.GONE);
+                            todaysData.clear();
                             mAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    });
+                }
 
-                    }
-                });
+                else
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+
+                                JSONArray allotments = new JSONArray(responseString);
+                                for (int i = 0; i < allotments.length(); i++) {
+                                    JSONObject allotmentObj = allotments.getJSONObject(i);
+                                    EngagementData engagementData = new EngagementData();
+                                    engagementData.ClientName = allotmentObj.getString("ClientName");
+                                    engagementData.EngagementTitle = allotmentObj.getString("EngagementName");
+                                    engagementData.StartDate = allotmentObj.getString("StartDate");
+                                    engagementData.EndDate = allotmentObj.getString("EndDate");
+                                    engagementData.ClientLocation = allotmentObj.getString("CurrentLocation");
+                                    engagementData.allocDate = allotmentObj.getString("AllocationDate");
+                                    engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
+                                    engagementData.status = allotmentObj.getString("Status");
+                                    engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
+                                    todaysData.add(engagementData);
+                                }
+
+                                progressBar.setVisibility(View.GONE);
+                                mAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+                }
+
+
             }
         });
     }

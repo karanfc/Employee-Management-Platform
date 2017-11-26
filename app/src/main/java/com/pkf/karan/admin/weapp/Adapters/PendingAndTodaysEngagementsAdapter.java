@@ -167,7 +167,7 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
                 if(myHolder.office.isChecked() | myHolder.client.isChecked())
                 {
                     if(myHolder.client.isChecked()) location = "Client";
-                    else location = "Office";           Log.e("Karan", location);
+                    else location = "Office";
 
                     showConfirmDialog(v, userInfo.getUserId(), dailyAllocationId, location);
                 }
