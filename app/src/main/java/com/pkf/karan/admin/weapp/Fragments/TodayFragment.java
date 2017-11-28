@@ -1,21 +1,29 @@
 package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pkf.karan.admin.weapp.Adapters.PendingAndTodaysEngagementsAdapter;
 import com.pkf.karan.admin.weapp.DataClasses.EngagementData;
+import com.pkf.karan.admin.weapp.MainPackage.TellUsTheIssue;
 import com.pkf.karan.admin.weapp.R;
 import com.pkf.karan.admin.weapp.UserInformation;
 
@@ -24,11 +32,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -58,17 +71,23 @@ public class TodayFragment extends Fragment {
     private String empId, empName, responseString;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
+    Boolean isHappy = false;
+
 
     final List<EngagementData> todaysData=new ArrayList<>();
     LinearLayoutManager mLayoutManager;
     FloatingActionButton mFloatingActionButton;
     UserInformation userInfo;
-
-
+    LinearLayout noengagementsView;
+    TextView name, date, day, noEngagementsTitle;
+    String dateString, dayString;
+    Typeface font;
+    Button askForAllocation;
 
     public TodayFragment() {
         // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -102,8 +121,41 @@ public class TodayFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_today, container, false);
         userInfo = (UserInformation)getActivity().getApplicationContext();
+        font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
 
-        todaysData.clear();
+
+        Calendar calendar = Calendar.getInstance();
+        Date dateObject = calendar.getTime();
+
+        dayString = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(dateObject.getTime());
+        dateString = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH).format(dateObject.getTime());
+
+        noengagementsView = (LinearLayout)view.findViewById(R.id.noEngagementsLayout);
+        noengagementsView.setVisibility(View.GONE);
+
+        noEngagementsTitle = (TextView)view.findViewById(R.id.noEngagementsTitle);
+        noEngagementsTitle.setTypeface(font);
+
+        askForAllocation = (Button)view.findViewById(R.id.askForAllocation);
+        askForAllocation.setTypeface(font);
+        askForAllocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConfirmDialog(v);
+            }
+        });
+
+        name = (TextView)view.findViewById(R.id.employee_name);
+        name.setTypeface(font);
+        name.setText("Welcome, " + userInfo.getUserName());
+
+        date = (TextView)view.findViewById(R.id.date);
+        date.setTypeface(font);
+        date.setText(dateString);
+
+        day = (TextView)view.findViewById(R.id.day);
+        day.setTypeface(font);
+        day.setText(dayString);
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setRefreshing(false);
@@ -116,14 +168,38 @@ public class TodayFragment extends Fragment {
         });
 
         todaysRecycler = (RecyclerView)view.findViewById(R.id.todayRecycler);
-        mFloatingActionButton = (FloatingActionButton)this.getActivity().findViewById(R.id.floating_action_button);
+        todaysRecycler.setVisibility(View.VISIBLE);
+
+        mFloatingActionButton = (FloatingActionButton)this.getActivity().findViewById(R.id.floating_action_button_today);
+        mFloatingActionButton.setImageResource(R.drawable.ic_action_name);
+
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        empId = getActivity().getIntent().getStringExtra("empId");
+        empId = userInfo.getUserId();
 
 
-        LoadData();
+        if(todaysData.size()==0)
+        {
+            LoadData();
+        }
+
+        else
+        {
+            for(int i=0; i<todaysData.size(); i++)
+            {
+                isHappy = !todaysData.get(i).status.equals("UnConfirmed");
+            }
+
+            if(isHappy)
+            {
+                mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
+            }
+            else
+            {
+                mFloatingActionButton.setImageResource(R.drawable.ic_action_name);
+            }
+        }
 
         setUpRecyclerView();
 
@@ -142,8 +218,117 @@ public class TodayFragment extends Fragment {
         return view;
     }
 
+    private void showConfirmDialog(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Do you want to ask for allocation?");
+
+
+
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                confirmAskForAllocation();
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        textView.setTypeface(font);
+    }
+
+    private void confirmAskForAllocation() {
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        OkHttpClient client = new OkHttpClient();
+
+        FormBody body = new FormBody.Builder()
+                .add("employeeId", empId)
+                .build();
+
+
+        final Request request = new Request.Builder()
+                .url("http://13.127.11.204:10002/api/AllocationApi/AskForAllocation")
+                .post(body)
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("Error",e.toString());
+                progressBar.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                final String alreadyAsked;
+                alreadyAsked = response.body().string();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+
+                        if(alreadyAsked.equals("false"))
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setMessage("Request successfully sent.");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
+                        }
+                        else
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setMessage("You have already asked for allocation.");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
+                        }
+                    }
+                });
+            }
+        });
+
+
+    }
+
     private void setUpRecyclerView() {
-        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), todaysData, "today", progressBar);
+
+        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), todaysData, "today", progressBar, mFloatingActionButton, noengagementsView, todaysRecycler);
         todaysRecycler.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         todaysRecycler.setLayoutManager(mLayoutManager);
@@ -151,7 +336,9 @@ public class TodayFragment extends Fragment {
 
     private void LoadData() {
 
-        todaysData.clear();
+        noengagementsView.setVisibility(View.GONE);
+        todaysRecycler.setVisibility(View.VISIBLE);
+
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -165,8 +352,17 @@ public class TodayFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("Error",e.toString());
+            public void onFailure(Call call, final IOException e) {
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("Error",e.toString());
+                        progressBar.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             }
 
@@ -183,10 +379,15 @@ public class TodayFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
+
+                            noengagementsView.setVisibility(View.VISIBLE);
+                            todaysRecycler.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
                             todaysData.clear();
                             mAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
+
                         }
                     });
                 }
@@ -198,6 +399,11 @@ public class TodayFragment extends Fragment {
                         public void run() {
 
                             try {
+
+                                todaysData.clear();
+
+                                noengagementsView.setVisibility(View.GONE);
+                                todaysRecycler.setVisibility(View.VISIBLE);
 
                                 JSONArray allotments = new JSONArray(responseString);
                                 for (int i = 0; i < allotments.length(); i++) {
@@ -213,6 +419,20 @@ public class TodayFragment extends Fragment {
                                     engagementData.status = allotmentObj.getString("Status");
                                     engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
                                     todaysData.add(engagementData);
+                                }
+
+                                for(int i=0; i<todaysData.size(); i++)
+                                {
+                                    isHappy = !todaysData.get(i).status.equals("UnConfirmed");
+                                }
+
+                                if(isHappy)
+                                {
+                                    mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
+                                }
+                                else
+                                {
+                                    mFloatingActionButton.setImageResource(R.drawable.ic_action_name);
                                 }
 
                                 progressBar.setVisibility(View.GONE);

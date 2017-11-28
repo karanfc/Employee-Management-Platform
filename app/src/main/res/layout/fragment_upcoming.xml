@@ -32,6 +32,7 @@
                 android:textAllCaps="true">
 
                 <TextView
+                    android:id="@+id/noEngagementsTitle"
                     android:text="no engagements found"
                     android:textAllCaps="true"
                     android:layout_margin="8dp"
@@ -41,6 +42,17 @@
                     android:layout_height="wrap_content">
 
                 </TextView>
+
+                <Button
+                    android:id="@+id/askForAllocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:text="ASK FOR ALLOCATION"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorPrimary"
+                    android:padding="8dp"
+                    android:textColor="#fff"/>
 
             </LinearLayout>
 

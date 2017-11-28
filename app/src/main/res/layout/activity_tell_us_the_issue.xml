@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+
+        <LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textSize="18sp"
+            android:text="Tell us the issue"
+            android:textColor="#000"
+            android:textAlignment="viewStart"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:textAllCaps="false"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp">
+
+            <CheckBox
+                android:id="@+id/startDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/startDateTitle"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Start Date"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp">
+
+            <CheckBox
+                android:id="@+id/endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/endDateTitle"
+                android:layout_marginStart="32dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textSize="16sp"
+                android:text="End Date"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp">
+
+            <CheckBox
+                android:id="@+id/clientLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/clientLocationTitle"
+                android:layout_marginStart="32dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Client Location"
+                android:textSize="16sp"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="4dp">
+
+            <CheckBox
+                android:id="@+id/engagementType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/engagmentTypeTitle"
+                android:layout_marginStart="32dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Type of Engagment"
+                android:textSize="16sp"
+                />
+
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:text="Leave a Remark (*)"
+        android:textColor="#000"
+        android:textAlignment="viewStart"
+        android:layout_marginStart="32dp"
+        android:textAllCaps="false"/>
+
+    <EditText
+        android:gravity="start"
+        android:id="@+id/remark"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:background="@drawable/edittext_border"
+        android:textSize="16sp"
+        android:inputType="textMultiLine"
+        />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="send"
+        android:background="@color/colorPrimary"
+        android:textColor="#fff"/>
+
+    </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"/>
+
+    </RelativeLayout>
+
+</ScrollView>
+
+
+

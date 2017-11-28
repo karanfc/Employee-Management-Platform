@@ -61,7 +61,27 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floating_action_button"
+            android:id="@+id/floating_action_button_today"
+            android:src="@drawable/ic_action_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating_action_button_pending"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_action_name"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating_action_button_upcoming"
             android:src="@drawable/ic_action_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

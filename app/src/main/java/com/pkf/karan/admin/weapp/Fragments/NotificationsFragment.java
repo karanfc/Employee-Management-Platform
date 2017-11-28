@@ -1,19 +1,25 @@
 package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatCallback;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.pkf.karan.admin.weapp.Adapters.NotificationsAdapter;
 import com.pkf.karan.admin.weapp.DataClasses.NotificationData;
+import com.pkf.karan.admin.weapp.LoginActivity;
+import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
 import com.pkf.karan.admin.weapp.R;
 
 import java.util.ArrayList;
@@ -27,7 +33,7 @@ import java.util.List;
  * Use the {@link NotificationsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -88,6 +94,18 @@ public class NotificationsFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("Notifications");
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.menu_main_signout)
+                {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+
         notificationsRecycler = (RecyclerView)view.findViewById(R.id.notificationRecycler);
 
         LoadData();
@@ -99,7 +117,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void LoadData() {
-        for(int i=0;i<6;i++)
+        for(int i=0;i<5;i++)
         {
             NotificationData notificationData = new NotificationData();
             notificationData.notificationTitle = "Notification Name:" + i;
@@ -153,4 +171,5 @@ public class NotificationsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

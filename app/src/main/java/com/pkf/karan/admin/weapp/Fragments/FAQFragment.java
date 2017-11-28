@@ -1,6 +1,7 @@
 package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +18,7 @@ import com.pkf.karan.admin.weapp.Adapters.FaqsAdapter;
 import com.pkf.karan.admin.weapp.Adapters.NotificationsAdapter;
 import com.pkf.karan.admin.weapp.DataClasses.FaqData;
 import com.pkf.karan.admin.weapp.DataClasses.NotificationData;
+import com.pkf.karan.admin.weapp.LoginActivity;
 import com.pkf.karan.admin.weapp.R;
 
 import java.util.ArrayList;
@@ -89,6 +92,18 @@ public class FAQFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setTitle("FAQs");
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.menu_main_signout)
+                {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+
         faqsRecycler = (RecyclerView)view.findViewById(R.id.faqRecycler);
 
         LoadData();
@@ -107,7 +122,7 @@ public class FAQFragment extends Fragment {
     }
 
     private void LoadData() {
-        for(int i=0;i<6;i++)
+        for(int i=0;i<5;i++)
         {
             FaqData faqdata = new FaqData();
             faqdata.faqQuestion = "Question:" + i;

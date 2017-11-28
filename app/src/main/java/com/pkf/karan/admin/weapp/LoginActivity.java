@@ -2,9 +2,11 @@ package com.pkf.karan.admin.weapp;
 
 
 import android.app.Application;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     UserInformation userInfo;
 
     String empId, empName;
+    Typeface font;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initializeViews() {
 
-        Typeface font = Typeface.createFromAsset(getAssets(),  "fonts/OpenSans-Regular.ttf");
+        font  = Typeface.createFromAsset(getAssets(),  "fonts/OpenSans-Regular.ttf");
 
         emailLayout = (TextInputLayout)findViewById(R.id.input_layout_email);
         passwordLayout = (TextInputLayout)findViewById(R.id.input_layout_password);
@@ -110,7 +114,13 @@ public class LoginActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -140,7 +150,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, EngagementsActivity.class);
                                 intent.putExtra("empId", empId);
                                 intent.putExtra("empName", empName);
-                                userInfo.userId = empId;
+                                userInfo.setUserId(empId);
+                                userInfo.setUserName(empName);
                                 startActivity(intent);
                             }
                             else

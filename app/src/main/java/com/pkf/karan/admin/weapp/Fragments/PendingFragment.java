@@ -1,6 +1,7 @@
 package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pkf.karan.admin.weapp.Adapters.PendingAndTodaysEngagementsAdapter;
 import com.pkf.karan.admin.weapp.DataClasses.EngagementData;
@@ -62,6 +66,10 @@ public class PendingFragment extends Fragment {
     FloatingActionButton mFloatingActionButton;
     UserInformation userInfo;
     private String empId, empName, responseString;
+    LinearLayout noengagementsView;
+    TextView noEngagementsTitle;
+    Typeface font;
+
 
 
     public PendingFragment() {
@@ -101,7 +109,16 @@ public class PendingFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_pending, container, false);
         userInfo = (UserInformation)getActivity().getApplicationContext();
 
-        Pendingdata.clear();
+        font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
+
+
+        noengagementsView = (LinearLayout)view.findViewById(R.id.noEngagementsLayout);
+        noengagementsView.setVisibility(View.GONE);
+
+        noEngagementsTitle = (TextView)view.findViewById(R.id.noEngagementsTitle);
+        noEngagementsTitle.setTypeface(font);
+
+        empId = userInfo.getUserId();
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,14 +130,16 @@ public class PendingFragment extends Fragment {
         });
 
         pendingRecycler = (RecyclerView)view.findViewById(R.id.pendingRecycler);
-        mFloatingActionButton = (FloatingActionButton)this.getActivity().findViewById(R.id.floating_action_button);
+        pendingRecycler.setVisibility(View.VISIBLE);
+        mFloatingActionButton = (FloatingActionButton)this.getActivity().findViewById(R.id.floating_action_button_pending);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        empId = getActivity().getIntent().getStringExtra("empId");
-        Log.e("empId", empId);
+        if(Pendingdata.size()==0)
+        {
+            LoadData();
 
-        LoadData();
+        }
 
         setUpRecyclerView();
 
@@ -140,7 +159,7 @@ public class PendingFragment extends Fragment {
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), Pendingdata, "pending", progressBar);
+        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), Pendingdata, "pending", progressBar, mFloatingActionButton, noengagementsView, pendingRecycler);
         pendingRecycler.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         pendingRecycler.setLayoutManager(mLayoutManager);
@@ -149,7 +168,9 @@ public class PendingFragment extends Fragment {
 
     private void LoadData() {
 
-        Pendingdata.clear();
+
+        noengagementsView.setVisibility(View.GONE);
+        pendingRecycler.setVisibility(View.VISIBLE);
 
         progressBar.setVisibility(View.VISIBLE);
         OkHttpClient client = new OkHttpClient();
@@ -162,8 +183,16 @@ public class PendingFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("Error",e.toString());
+            public void onFailure(Call call, final IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("Error",e.toString());
+                        progressBar.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -179,6 +208,10 @@ public class PendingFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
+
+                            noengagementsView.setVisibility(View.VISIBLE);
+                            pendingRecycler.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
                             Pendingdata.clear();
                             mAdapter.notifyDataSetChanged();
@@ -194,6 +227,10 @@ public class PendingFragment extends Fragment {
                         public void run() {
 
                             try {
+                                Pendingdata.clear();
+
+                                noengagementsView.setVisibility(View.GONE);
+                                pendingRecycler.setVisibility(View.VISIBLE);
 
                                 JSONArray allotments = new JSONArray(responseString);
                                 for (int i = 0; i < allotments.length(); i++) {
@@ -210,6 +247,8 @@ public class PendingFragment extends Fragment {
                                     engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
                                     Pendingdata.add(engagementData);
                                 }
+
+                                mFloatingActionButton.setImageResource(R.drawable.ic_action_name);
 
                                 progressBar.setVisibility(View.GONE);
                                 mAdapter.notifyDataSetChanged();

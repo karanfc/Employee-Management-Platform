@@ -4,8 +4,6 @@
     android:id="@+id/Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:foreground="?android:attr/selectableItemBackground"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:clickable="true"
     android:layout_marginTop="4dp"
@@ -101,8 +99,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_action_confirm"
+                    android:background="#fff" />
+
+                <ImageButton
+                    android:id="@+id/reject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_reject"
                     android:background="#fff"
                     android:layout_marginEnd="8dp"/>
+
 
             </LinearLayout>
 

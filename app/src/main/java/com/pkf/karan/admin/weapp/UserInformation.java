@@ -11,6 +11,15 @@ public class UserInformation extends Application {
     private static UserInformation userInfo;
 
     String userId;
+    String userName;
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
 
     public String getUserId() {
         return userId;

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pkf.karan.admin.weapp">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".UserInformation"
@@ -12,8 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -23,10 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainPackage.EngagementsActivity"
+        <activity
+            android:name=".MainPackage.EngagementsActivity"
             android:label="Engagements"
-            android:theme="@style/MyMaterialTheme"
-            android:parentActivityName=".LoginActivity"></activity>
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/MyMaterialTheme" />
+        <activity android:name=".MainPackage.TellUsTheIssue"
+            android:label="Tell us the issue"
+            android:parentActivityName=".MainPackage.EngagementsActivity"></activity>
     </application>
 
 </manifest>

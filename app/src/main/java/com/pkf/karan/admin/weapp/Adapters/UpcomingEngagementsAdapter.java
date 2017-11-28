@@ -2,8 +2,10 @@ package com.pkf.karan.admin.weapp.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,8 +16,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.pkf.karan.admin.weapp.DataClasses.EngagementData;
 import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
+import com.pkf.karan.admin.weapp.MainPackage.TellUsTheIssue;
 import com.pkf.karan.admin.weapp.R;
 import com.pkf.karan.admin.weapp.UserInformation;
 
@@ -51,15 +56,22 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
     UserInformation userInfo;
     String responseString;
     ProgressBar pb;
+    FloatingActionButton mfab;
+    Boolean isHappy = false;
+    LinearLayout noEngagementsView;
+    RecyclerView upcomingRecycler;
 
 
 
 
 
-    public UpcomingEngagementsAdapter(Context context, List<EngagementData> data, ProgressBar progressBar){
+    public UpcomingEngagementsAdapter(Context context, List<EngagementData> data, ProgressBar progressBar, FloatingActionButton mFloatingActionButton, RecyclerView upcomingRecycler, LinearLayout noengagementsView){
         this.context=context;
         inflater= LayoutInflater.from(context);
         this.pb = progressBar;
+        this.mfab = mFloatingActionButton;
+        this.noEngagementsView = noengagementsView;
+        this.upcomingRecycler = upcomingRecycler;
         this.data=data;
     }
 
@@ -86,19 +98,21 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
         myHolder.engagementTitle.setText(current.EngagementTitle);
         myHolder.engagementTitle.setTypeface(font);
 
-        if(current.status.equals("UnConfirmed"))
+       if(current.status.equals("UnConfirmed"))
         {
             myHolder.engagementStatus.setText("Unconfirmed");
             myHolder.engagementStatus.setTextColor(Color.parseColor("#F44336"));
             myHolder.accept.setVisibility(View.VISIBLE);
+            myHolder.reject.setVisibility(View.VISIBLE);
         }
         else if(current.status.equals("Confirmed"))
         {
             myHolder.engagementStatus.setText("Confirmed");
-            myHolder.engagementStatus.setTextColor(Color.parseColor("#009688"));
+            myHolder.engagementStatus.setTextColor(Color.parseColor("#76FF03"));
             myHolder.accept.setVisibility(View.GONE);
-
+            myHolder.reject.setVisibility(View.GONE);
         }
+
         myHolder.engagementStatus.setTypeface(font);
 
         myHolder.clientName.setText("Client name: " + current.ClientName);
@@ -127,6 +141,43 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         });
 
+        myHolder.reject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dailyAllocationId = data.get(myHolder.getAdapterPosition()).dailyAllocationId;
+                EmployeeEngagementId = data.get(myHolder.getAdapterPosition()).EmployeeEngagementId;
+                showRejectDialog(v, userInfo.getUserId(), EmployeeEngagementId);
+            }
+        });
+
+    }
+
+    private void showRejectDialog(View v, String userId, final String employeeEngagementId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setMessage("Do you want to launch a change request?");
+
+
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Intent intent = new Intent(context, TellUsTheIssue.class);
+                intent.putExtra("rejectionType", "2");
+                intent.putExtra("userId", userInfo.getUserId());
+                intent.putExtra("entityId", employeeEngagementId);
+                context.startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        textView.setTypeface(font);
     }
 
     private void showConfirmDialog(View v, final String userId, final String EmployeeEngagementId) {
@@ -202,7 +253,7 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
     private void LoadData() {
         data.clear();
 
-        OkHttpClient client = new OkHttpClient();
+        final OkHttpClient client = new OkHttpClient();
 
 
         Request request = new Request.Builder()
@@ -212,8 +263,15 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-
+            public void onFailure(Call call, final IOException e) {
+                ((EngagementsActivity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("Error",e.toString());
+                        Toast.makeText(context, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                        pb.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -222,36 +280,78 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 Log.e("Upcoming", responseString);
 
-                ((EngagementsActivity)context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-                            JSONArray allotments = new JSONArray(responseString);
-                            for (int i = 0; i < allotments.length(); i++) {
-                                JSONObject allotmentObj = allotments.getJSONObject(i);
-                                EngagementData engagementData = new EngagementData();
-                                engagementData.ClientName = allotmentObj.getString("ClientName");
-                                engagementData.EngagementTitle = allotmentObj.getString("EngagementName");
-                                engagementData.StartDate = allotmentObj.getString("StartDate");
-                                engagementData.EndDate = allotmentObj.getString("EndDate");
-                                engagementData.ClientLocation = allotmentObj.getString("CurrentLocation");
-                                engagementData.allocDate = allotmentObj.getString("AllocationDate");
-                                engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
-                                engagementData.status = allotmentObj.getString("Status");
-                                engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
-                                data.add(engagementData);
-                            }
-
+                if(String.valueOf(response.code()).equals("204"))
+                {
+                    ((EngagementsActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            upcomingRecycler.setVisibility(View.GONE);
+                            noEngagementsView.setVisibility(View.VISIBLE);
                             notifyDataSetChanged();
                             pb.setVisibility(View.GONE);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    });
+                }
 
-                    }
-                });
+
+                else
+                {
+                    upcomingRecycler.setVisibility(View.VISIBLE);
+                    noEngagementsView.setVisibility(View.GONE);
+
+                    ((EngagementsActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+                                JSONArray allotments = new JSONArray(responseString);
+                                for (int i = 0; i < allotments.length(); i++) {
+                                    JSONObject allotmentObj = allotments.getJSONObject(i);
+                                    EngagementData engagementData = new EngagementData();
+                                    engagementData.ClientName = allotmentObj.getString("ClientName");
+                                    engagementData.EngagementTitle = allotmentObj.getString("EngagementName");
+                                    engagementData.StartDate = allotmentObj.getString("StartDate");
+                                    engagementData.EndDate = allotmentObj.getString("EndDate");
+                                    engagementData.ClientLocation = allotmentObj.getString("CurrentLocation");
+                                    engagementData.allocDate = allotmentObj.getString("AllocationDate");
+                                    engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
+                                    engagementData.status = allotmentObj.getString("Status");
+                                    engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
+                                    data.add(engagementData);
+                                }
+
+                                for(int i=0; i<data.size(); i++)
+                                {
+                                    if(data.get(i).status.equals("UnConfirmed"))
+                                    {
+                                        isHappy = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        isHappy = true;
+                                    }
+                                }
+
+                                if(isHappy)
+                                {
+                                    mfab.setImageResource(R.drawable.ic_action_happy);
+                                }
+                                else
+                                {
+                                    mfab.setImageResource(R.drawable.ic_action_name);
+                                }
+                                notifyDataSetChanged();
+                                pb.setVisibility(View.GONE);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -268,7 +368,7 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView clientName;
         TextView duration;
         TextView engagementStatus;
-        ImageButton accept;
+        ImageButton accept, reject;
 
         // create constructor to get widget reference
         public MyHolder(final View itemView) {
@@ -280,7 +380,7 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
 
             duration = (TextView)itemView.findViewById(R.id.duration);
             accept = (ImageButton)itemView.findViewById(R.id.accept);
-
+            reject = (ImageButton)itemView.findViewById(R.id.reject);
         }
     }
 

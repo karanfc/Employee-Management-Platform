@@ -33,6 +33,7 @@
                 android:textAllCaps="true">
 
                 <TextView
+                    android:id="@+id/noEngagementsTitle"
                     android:text="no engagements found"
                     android:textAllCaps="true"
                     android:layout_margin="8dp"
