@@ -1,37 +1,34 @@
 package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatCallback;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pkf.karan.admin.weapp.Adapters.NotificationsAdapter;
-import com.pkf.karan.admin.weapp.DataClasses.NotificationData;
+import com.pkf.karan.admin.weapp.Adapters.FaqsAdapter;
+import com.pkf.karan.admin.weapp.DataClasses.FaqData;
 import com.pkf.karan.admin.weapp.LoginActivity;
 import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
 import com.pkf.karan.admin.weapp.MainPackage.FAQActivity;
 import com.pkf.karan.admin.weapp.R;
 import com.pkf.karan.admin.weapp.UserInformation;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,12 +44,12 @@ import okhttp3.Response;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NotificationsFragment.OnFragmentInteractionListener} interface
+ * {@link AskForAllotmentsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NotificationsFragment#newInstance} factory method to
+ * Use the {@link AskForAllotmentsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NotificationsFragment extends Fragment{
+public class AskForAllotmentsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,24 +59,21 @@ public class NotificationsFragment extends Fragment{
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
     private Toolbar toolbar;
 
-    private RecyclerView notificationsRecycler;
-    private NotificationsAdapter mAdapter;
+    private OnFragmentInteractionListener mListener;
+
+    Button askForAllotment;
+    Typeface font;
     UserInformation userInfo;
-    RelativeLayout noNotificationsLayout;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
 
 
-    final List<NotificationData> data=new ArrayList<>();
-    LinearLayoutManager mLayoutManager;
 
-    String responseString;
 
-    public NotificationsFragment() {
+
+
+    public AskForAllotmentsFragment() {
         // Required empty public constructor
     }
 
@@ -89,11 +83,11 @@ public class NotificationsFragment extends Fragment{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationsFragment.
+     * @return A new instance of fragment AskForAllotmentsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NotificationsFragment newInstance(String param1, String param2) {
-        NotificationsFragment fragment = new NotificationsFragment();
+    public static AskForAllotmentsFragment newInstance(String param1, String param2) {
+        AskForAllotmentsFragment fragment = new AskForAllotmentsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -113,32 +107,18 @@ public class NotificationsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_notifications, container, false);
-
-        noNotificationsLayout = (RelativeLayout)view.findViewById(R.id.noNotificationsLayout);
-        noNotificationsLayout.setVisibility(View.GONE);
-
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setRefreshing(false);
-        progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                progressBar.setVisibility(View.VISIBLE);
-                LoadData();
-            }
-        });
+        final View view = inflater.inflate(R.layout.fragment_ask_for_allotments, container, false);
 
         userInfo = (UserInformation)getActivity().getApplicationContext();
+        font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
 
+        progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setTitle("Notifications");
+        activity.getSupportActionBar().setTitle("Ask for Allocation");
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -158,83 +138,116 @@ public class NotificationsFragment extends Fragment{
             }
         });
 
-        notificationsRecycler = (RecyclerView)view.findViewById(R.id.notificationRecycler);
-        notificationsRecycler.setVisibility(View.VISIBLE);
-
-        LoadData();
-
-        setUpRecyclerView();
-
+        askForAllotment = (Button)view.findViewById(R.id.askForAllocation);
+        askForAllotment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConfirmDialog(v);
+            }
+        });
 
         return view;
     }
 
-    private void LoadData() {
+    private void showConfirmDialog(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Do you want to ask for allocation?");
+
+
+
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                confirmAskForAllocation();
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        textView.setTypeface(font);
+    }
+
+    private void confirmAskForAllocation() {
 
         progressBar.setVisibility(View.VISIBLE);
 
-
         OkHttpClient client = new OkHttpClient();
 
+        FormBody body = new FormBody.Builder()
+                .add("employeeId", userInfo.getUserId())
+                .build();
+
+
         final Request request = new Request.Builder()
-                .url(userInfo.getServerUrl() + "/api/AllocationApi/GetNotificationList?userId=" + userInfo.getUserId())
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/AskForAllocation")
+                .post(body)
                 .build();
 
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getActivity().getApplicationContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                Log.e("Error",e.toString());
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+                final String alreadyAsked;
+                alreadyAsked = response.body().string();
 
-                data.clear();
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressBar.setVisibility(View.GONE);
+
+                        if(alreadyAsked.equals("false"))
                         {
-                            try {
-                                responseString = response.body().string();
-                                Log.e("Notif",responseString);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                                JSONArray jsonArray= new JSONArray(responseString);
-                                for(int i=0;i<jsonArray.length();i++)
-                                {
-                                    NotificationData notificationData = new NotificationData();
-                                    JSONObject obj = jsonArray.getJSONObject(i);
-                                    notificationData.description = obj.getString("Remarks");
-                                    Log.e("description",notificationData.description);
-                                    notificationData.isNotifRead = !Boolean.valueOf(obj.getString("IsUnRead"));
-                                    notificationData.notifType = obj.getString("NotificationType");
-                                    notificationData.timeStamp = obj.getString("NotificationDate");
-                                    data.add(notificationData);
+                            builder.setMessage("Request successfully sent.");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
                                 }
+                            });
 
-                                if(jsonArray.length() == 0)
-                                {
-                                    noNotificationsLayout.setVisibility(View.VISIBLE);
-                                    notificationsRecycler.setVisibility(View.GONE);
-                                }
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
 
-                                mAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
-                                progressBar.setVisibility(View.GONE);
-
-
-                            } catch (IOException | JSONException e) {
-                                e.printStackTrace();
-                            }
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
                         }
+                        else
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+                            builder.setMessage("You have already asked for allocation.");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
+                        }
                     }
                 });
             }
@@ -243,13 +256,6 @@ public class NotificationsFragment extends Fragment{
 
     }
 
-    private void setUpRecyclerView()
-    {
-        mAdapter = new NotificationsAdapter(getContext(), data);
-        notificationsRecycler.setAdapter(mAdapter);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        notificationsRecycler.setLayoutManager(mLayoutManager);
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -289,5 +295,4 @@ public class NotificationsFragment extends Fragment{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }

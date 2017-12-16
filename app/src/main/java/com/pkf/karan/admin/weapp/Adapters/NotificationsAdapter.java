@@ -3,6 +3,7 @@ package com.pkf.karan.admin.weapp.Adapters;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.pkf.karan.admin.weapp.DataClasses.EngagementData;
 import com.pkf.karan.admin.weapp.DataClasses.NotificationData;
 import com.pkf.karan.admin.weapp.R;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,8 +24,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private Context context;
     private LayoutInflater inflater;
-    List<NotificationData> data;
-    NotificationData current;
+    private List<NotificationData> data;
+    private NotificationData current;
+    String notifDate, notifTime;
 
 
     public NotificationsAdapter(Context context, List<NotificationData> data){
@@ -49,9 +52,26 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         Typeface font = Typeface.createFromAsset(context.getAssets(),  "fonts/OpenSans-Regular.ttf");
 
         NotificationsAdapter.MyHolder myHolder= (NotificationsAdapter.MyHolder) holder;
-        myHolder.notificationTitle.setTypeface(font);
         myHolder.timeStamp.setTypeface(font);
+
+        Calendar c3 = Calendar.getInstance();
+        c3.setTimeInMillis(Long.parseLong(current.timeStamp.substring(current.timeStamp.indexOf("(")+1,current.timeStamp.indexOf(")"))));  //here your time in miliseconds
+        notifDate = "" + c3.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(c3.get(Calendar.MONTH)))+1) + "/" + c3.get(Calendar.YEAR);
+        notifTime = "" + c3.get(Calendar.HOUR_OF_DAY) + ":" + c3.get(Calendar.MINUTE);
+        myHolder.timeStamp.setText(notifDate);
+
+
         myHolder.description.setTypeface(font);
+        myHolder.description.setText(current.description);
+
+
+        myHolder.notifType.setTypeface(font);
+        if(current.notifType.equals("ByAdmin"))
+        {
+            myHolder.notifType.setText("Admin");
+        }
+
+
     }
 
     @Override
@@ -61,19 +81,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     class MyHolder extends RecyclerView.ViewHolder{
 
-        TextView notificationTitle;
         TextView timeStamp;
         TextView description;
+        TextView notifType;
 
 
 
         // create constructor to get widget reference
         public MyHolder(final View itemView) {
             super(itemView);
-            notificationTitle = (TextView) itemView.findViewById(R.id.notificationTitle);
             timeStamp = (TextView) itemView.findViewById(R.id.timeStamp);
             description = (TextView) itemView.findViewById(R.id.description);
-
+            notifType = (TextView)itemView.findViewById(R.id.notifType);
         }
 
     }

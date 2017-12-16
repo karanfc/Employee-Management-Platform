@@ -67,7 +67,7 @@ public class PendingFragment extends Fragment {
     UserInformation userInfo;
     private String empId, empName, responseString;
     LinearLayout noengagementsView;
-    TextView noEngagementsTitle;
+    TextView noEngagementsTitle, status;
     Typeface font;
 
 
@@ -111,6 +111,7 @@ public class PendingFragment extends Fragment {
 
         font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
 
+        status = (TextView)view.findViewById(R.id.employee_status);
 
         noengagementsView = (LinearLayout)view.findViewById(R.id.noEngagementsLayout);
         noengagementsView.setVisibility(View.GONE);
@@ -159,7 +160,7 @@ public class PendingFragment extends Fragment {
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), Pendingdata, "pending", progressBar, mFloatingActionButton, noengagementsView, pendingRecycler);
+        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), Pendingdata, "pending", progressBar, mFloatingActionButton, noengagementsView, pendingRecycler, status);
         pendingRecycler.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         pendingRecycler.setLayoutManager(mLayoutManager);
@@ -177,7 +178,7 @@ public class PendingFragment extends Fragment {
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/HomeApi/GetPendingAllocations" + "?" + "empId=" + empId)
+                .url(userInfo.getServerUrl()+"/api/HomeApi/GetPendingAllocations" + "?" + "empId=" + empId)
                 .build();
 
 

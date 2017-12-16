@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TextInputLayout emailLayout, passwordLayout;
     UserInformation userInfo;
+    RadioButton clientRadio, AcsRadio;
 
-    String empId, empName;
+    String empId, empName, empEmail, empPhone;
     Typeface font;
 
     @Override
@@ -57,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
 
         font  = Typeface.createFromAsset(getAssets(),  "fonts/OpenSans-Regular.ttf");
 
+        clientRadio = (RadioButton)findViewById(R.id.clientRadio);
+        AcsRadio = (RadioButton)findViewById(R.id.acsRadio);
         emailLayout = (TextInputLayout)findViewById(R.id.input_layout_email);
         passwordLayout = (TextInputLayout)findViewById(R.id.input_layout_password);
         emailLayout.setTypeface(font);
@@ -78,9 +82,11 @@ public class LoginActivity extends AppCompatActivity {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
 
-                if(email.length()>0 && password.length()>0)
+                if(email.length()>0 && password.length()>0 && (clientRadio.isChecked() | AcsRadio.isChecked() ))
                 {
                     progressBar.setVisibility(View.VISIBLE);
+                    if(clientRadio.isChecked()) userInfo.setServerUrl("http://35.154.18.27:10002");
+                    else userInfo.setServerUrl("http://13.127.11.204:10002");
                     Login();
                 }
 
@@ -107,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/LoginApi/ValidateEmployeeLogin").post(body)
+                .url(userInfo.getServerUrl() + "/api/LoginApi/ValidateEmployeeLogin").post(body)
                 .build();
 
 
@@ -140,6 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                                     JSONObject details = new JSONObject(responseString);
                                     empId = details.getString("EmployeeId");
                                     empName = details.getString("EmployeeName");
+                                    empEmail = details.getString("EmailId");
+                                    empPhone = details.getString("ContactNumber");
 
                                 } catch (IOException | JSONException e) {
                                     e.printStackTrace();
@@ -152,6 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                                 intent.putExtra("empName", empName);
                                 userInfo.setUserId(empId);
                                 userInfo.setUserName(empName);
+                                userInfo.setUserEmail(empEmail);
+                                userInfo.setUserPhone(empPhone);
                                 startActivity(intent);
                             }
                             else

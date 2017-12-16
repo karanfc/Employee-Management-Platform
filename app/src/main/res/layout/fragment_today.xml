@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content">
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/Card"
+                    android:id="@+id/infoCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -41,12 +41,9 @@
 
 
                         <LinearLayout
-                            android:id="@+id/infoCard"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
-
-
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -90,6 +87,44 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/status_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/employee_status"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Employee Status:"
+                                android:textSize="14sp"
+                                android:textColor="#000"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:layout_marginBottom="16dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/expanded_status_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone">
+
+                            <Button
+                                android:id="@+id/askForLeave"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Mark Leave for today"
+                                android:textColor="#fff"
+                                android:background="@color/colorPrimary"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:layout_marginBottom="16dp" />
+
+                        </LinearLayout>
+
+
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -97,7 +132,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/Card">
+                    android:layout_below="@id/infoCard">
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/todayRecycler"

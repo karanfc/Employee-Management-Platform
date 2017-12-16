@@ -5,6 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
    <LinearLayout
@@ -12,41 +14,6 @@
        android:layout_height="wrap_content"
        android:orientation="vertical">
 
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
-
-           <TextView
-               android:text="Start Date Correction"
-               android:layout_width="0dp"
-               android:layout_weight="1"
-               android:layout_height="wrap_content"
-               android:id="@+id/notificationTitle"
-               android:textSize="16sp"
-               android:layout_marginTop="16dp"
-               android:layout_marginLeft="8dp"
-               android:layout_marginRight="8dp"
-               android:layout_marginBottom="8dp"
-               android:textColor="#000"/>
-
-
-           <TextView
-               android:text="28.09.17 (20:03)"
-               android:layout_weight="0.6"
-               android:layout_width="0dp"
-               android:layout_height="wrap_content"
-               android:id="@+id/timeStamp"
-               android:textAllCaps="false"
-               android:textSize="16sp"
-               android:layout_marginTop="16dp"
-               android:layout_marginLeft="8dp"
-               android:layout_marginRight="8dp"
-               android:layout_marginBottom="8dp"
-               android:textColor="#000"/>
-
-
-
-       </LinearLayout>
 
 
        <TextView
@@ -55,11 +22,49 @@
            android:layout_height="wrap_content"
            android:text="Your request of start date correction for engagement XYZ has been approved"
            android:textAlignment="viewStart"
-           android:textSize="14sp"
+           android:textSize="16sp"
            android:layout_marginTop="12dp"
            android:layout_marginLeft="8dp"
            android:layout_marginRight="8dp"
-           android:layout_marginBottom="32dp" />
+           android:layout_marginBottom="16dp" />
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+
+           <TextView
+               android:text="Admin"
+               android:layout_weight="1"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:id="@+id/notifType"
+               android:textAllCaps="false"
+               android:textColor="#000"
+               android:layout_marginTop="16dp"
+               android:layout_marginLeft="8dp"
+               android:layout_marginRight="8dp"
+               android:layout_marginBottom="8dp"/>
+
+           <TextView
+               android:text="28.09.17 (20:03)"
+               android:layout_weight="0.5"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:id="@+id/timeStamp"
+               android:textAllCaps="false"
+               android:textAlignment="viewEnd"
+               android:layout_marginTop="16dp"
+               android:layout_marginLeft="8dp"
+               android:layout_marginRight="8dp"
+               android:layout_marginBottom="8dp"
+               android:textColor="#000"/>
+
+
+
+
+       </LinearLayout>
+
 
 
 

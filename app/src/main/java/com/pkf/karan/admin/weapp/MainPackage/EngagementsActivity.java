@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,11 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,9 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.pkf.karan.admin.weapp.Fragments.FAQFragment;
+import com.pkf.karan.admin.weapp.Fragments.AskForAllotmentsFragment;
 import com.pkf.karan.admin.weapp.Fragments.NotificationsFragment;
 import com.pkf.karan.admin.weapp.Fragments.PendingFragment;
 import com.pkf.karan.admin.weapp.Fragments.ProfileFragment;
@@ -39,7 +35,7 @@ import com.pkf.karan.admin.weapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EngagementsActivity extends AppCompatActivity implements FAQFragment.OnFragmentInteractionListener,
+public class EngagementsActivity extends AppCompatActivity implements AskForAllotmentsFragment.OnFragmentInteractionListener,
 ProfileFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,
 TodayFragment.OnFragmentInteractionListener, UpcomingFragment.OnFragmentInteractionListener,
 PendingFragment.OnFragmentInteractionListener{
@@ -91,6 +87,12 @@ PendingFragment.OnFragmentInteractionListener{
                 if(item.getItemId() == R.id.menu_main_signout)
                 {
                     Intent intent = new Intent(EngagementsActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+
+                else if(item.getItemId() == R.id.menu_main_faq)
+                {
+                    Intent intent = new Intent(EngagementsActivity.this, FAQActivity.class);
                     startActivity(intent);
                 }
                 return false;
@@ -162,7 +164,7 @@ PendingFragment.OnFragmentInteractionListener{
                         break;
 
                     case R.id.menu_help:
-                        fragment = new FAQFragment();
+                        fragment = new AskForAllotmentsFragment();
                         isEngagementsTabOpen = false;
                         break;
 

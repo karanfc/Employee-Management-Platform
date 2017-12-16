@@ -6,9 +6,11 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -78,11 +80,13 @@ public class TodayFragment extends Fragment {
     LinearLayoutManager mLayoutManager;
     FloatingActionButton mFloatingActionButton;
     UserInformation userInfo;
-    LinearLayout noengagementsView;
-    TextView name, date, day, noEngagementsTitle;
+    LinearLayout noengagementsView, statusLayout, askForAllotmentsLayout;
+    CardView infoCard;
+    TextView name, date, day, noEngagementsTitle, status;
     String dateString, dayString;
     Typeface font;
-    Button askForAllocation;
+    Button askForAllocation, markAsLeave;
+    Boolean isInfoCardExpanded = false;
 
     public TodayFragment() {
         // Required empty public constructor
@@ -123,6 +127,43 @@ public class TodayFragment extends Fragment {
         userInfo = (UserInformation)getActivity().getApplicationContext();
         font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
 
+        askForAllotmentsLayout = (LinearLayout)view.findViewById(R.id.expanded_status_layout);
+        askForAllotmentsLayout.setVisibility(View.GONE);
+
+        markAsLeave = (Button)view.findViewById(R.id.askForLeave);
+        markAsLeave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLeaveConfirmation(v);
+            }
+        });
+
+        infoCard = (CardView)view.findViewById(R.id.infoCard);
+
+        infoCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(status.getText().equals("Employee Status: Active") || status.getText().equals("Employee Status: Bench"))
+                {
+                    if(isInfoCardExpanded)
+                    {
+                        askForAllotmentsLayout.setVisibility(View.GONE);
+                        isInfoCardExpanded = false;
+                    }
+                    else
+                    {
+                        TransitionManager.beginDelayedTransition(infoCard);
+                        askForAllotmentsLayout.setVisibility(View.VISIBLE);
+                        isInfoCardExpanded = true;
+                    }
+                }
+
+            }
+        });
+
+
+
 
         Calendar calendar = Calendar.getInstance();
         Date dateObject = calendar.getTime();
@@ -156,6 +197,10 @@ public class TodayFragment extends Fragment {
         day = (TextView)view.findViewById(R.id.day);
         day.setTypeface(font);
         day.setText(dayString);
+
+        status = (TextView)view.findViewById(R.id.employee_status);
+        status.setTypeface(font);
+
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setRefreshing(false);
@@ -218,11 +263,124 @@ public class TodayFragment extends Fragment {
         return view;
     }
 
+    private void showLeaveConfirmation(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Do you want to mark as leave for today?");
+
+
+
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                confirmMarkAsLeave();
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        textView.setTypeface(font);
+    }
+
+    private void confirmMarkAsLeave() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        OkHttpClient client = new OkHttpClient();
+
+        FormBody body = new FormBody.Builder()
+                .add("employeeId", empId)
+                .build();
+
+
+        final Request request = new Request.Builder()
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/MarkEmployeeForLeave")
+                .post(body)
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("Error",e.toString());
+                progressBar.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+
+
+                final String code = String.valueOf(response.code());
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+
+                        if(code.equals("200"))
+                        {
+                            LoadData();
+
+                            mAdapter.notifyDataSetChanged();
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setMessage("Successfully applied for a leave");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
+
+
+                        }
+                        else
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setMessage("Request not processed");
+
+                            builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                            textView.setTypeface(font);
+                        }
+                    }
+                });
+            }
+        });
+
+
+    }
+
     private void showConfirmDialog(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setMessage("Do you want to ask for allocation?");
-
 
 
         builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -256,7 +414,7 @@ public class TodayFragment extends Fragment {
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/AllocationApi/AskForAllocation")
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/AskForAllocation")
                 .post(body)
                 .build();
 
@@ -328,7 +486,7 @@ public class TodayFragment extends Fragment {
 
     private void setUpRecyclerView() {
 
-        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), todaysData, "today", progressBar, mFloatingActionButton, noengagementsView, todaysRecycler);
+        mAdapter = new PendingAndTodaysEngagementsAdapter(getContext(), todaysData, "today", progressBar, mFloatingActionButton, noengagementsView, todaysRecycler, status);
         todaysRecycler.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         todaysRecycler.setLayoutManager(mLayoutManager);
@@ -346,7 +504,7 @@ public class TodayFragment extends Fragment {
 
 
         Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/HomeApi/GetTodaysAllocation" + "?" + "empId=" + empId)
+                .url(userInfo.getServerUrl()+"/api/HomeApi/GetTodaysAllocation" + "?" + "empId=" + empId)
                 .build();
 
 
@@ -380,7 +538,6 @@ public class TodayFragment extends Fragment {
                         @Override
                         public void run() {
                             mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
-
                             noengagementsView.setVisibility(View.VISIBLE);
                             todaysRecycler.setVisibility(View.GONE);
                             progressBar.setVisibility(View.GONE);
@@ -418,7 +575,20 @@ public class TodayFragment extends Fragment {
                                     engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
                                     engagementData.status = allotmentObj.getString("Status");
                                     engagementData.EmployeeEngagementId = allotmentObj.getString("EmployeeEngagementId");
-                                    todaysData.add(engagementData);
+
+                                    if(engagementData.ClientLocation.equals("") | engagementData.ClientLocation.equals("Client") | engagementData.ClientLocation.equals("Office"))
+
+                                    {
+                                        engagementData.ClientLocation = "Active";
+                                    }
+
+                                    status.setText("Employee Status: " + engagementData.ClientLocation);
+
+                                    if(!engagementData.EngagementTitle.equals(""))
+                                    {
+                                        todaysData.add(engagementData);
+                                    }
+
                                 }
 
                                 for(int i=0; i<todaysData.size(); i++)
@@ -433,6 +603,17 @@ public class TodayFragment extends Fragment {
                                 else
                                 {
                                     mFloatingActionButton.setImageResource(R.drawable.ic_action_name);
+                                }
+
+                                if(todaysData.size() == 0)
+                                {
+                                    mFloatingActionButton.setImageResource(R.drawable.ic_action_happy);
+                                    noengagementsView.setVisibility(View.VISIBLE);
+                                    todaysRecycler.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.GONE);
+                                    todaysData.clear();
+                                    mAdapter.notifyDataSetChanged();
+                                    swipeRefreshLayout.setRefreshing(false);
                                 }
 
                                 progressBar.setVisibility(View.GONE);

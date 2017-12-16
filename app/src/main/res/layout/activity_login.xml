@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="330dp"
         android:layout_margin="18dp"
         android:background="#AA424242"
         android:orientation="vertical">
@@ -59,11 +59,42 @@
             android:id="@+id/button_signin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@id/input_layout_password"
             android:layout_margin="24dp"
             android:background="@color/colorAccent"
             android:text="SIGN IN"
             android:textColor="#ffffff"/>
+
+        <RadioGroup
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/button_signin"
+            android:id="@+id/radioGroup"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <RadioButton
+                android:id="@+id/clientRadio"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textColor="#fff"
+                android:layout_height="wrap_content"
+                android:text="PKF"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <RadioButton
+                android:id="@+id/acsRadio"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textColor="#fff"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorPrimary"
+                android:text="ACS"/>
+
+        </RadioGroup>
 
     </RelativeLayout>
 

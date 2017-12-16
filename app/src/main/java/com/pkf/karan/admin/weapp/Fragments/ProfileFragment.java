@@ -2,6 +2,7 @@ package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.pkf.karan.admin.weapp.LoginActivity;
+import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
+import com.pkf.karan.admin.weapp.MainPackage.FAQActivity;
 import com.pkf.karan.admin.weapp.R;
+import com.pkf.karan.admin.weapp.UserInformation;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,10 +37,13 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    TextView nameLabel, name, emailLabel, email, phoneLabel, phone;
 
     private OnFragmentInteractionListener mListener;
 
     private Toolbar toolbar;
+    UserInformation userInfo;
+    Typeface font;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -74,6 +82,9 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        userInfo = (UserInformation)getActivity().getApplicationContext();
+        font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
+
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
@@ -87,9 +98,41 @@ public class ProfileFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), LoginActivity.class);
                     startActivity(intent);
                 }
+
+                else if(item.getItemId() == R.id.menu_main_faq)
+                {
+                    Intent intent = new Intent(getActivity(), FAQActivity.class);
+                    startActivity(intent);
+                }
                 return false;
             }
         });
+
+        nameLabel = (TextView)view.findViewById(R.id.nameLabel);
+        name = (TextView)view.findViewById(R.id.name);
+        name.setText(userInfo.getUserName());
+        if(userInfo.getUserName().equals("null"))
+            name.setText("-");
+        name.setTypeface(font);
+        nameLabel.setTypeface(font);
+
+        emailLabel = (TextView)view.findViewById(R.id.emailLabel);
+        email = (TextView)view.findViewById(R.id.email);
+        email.setText(userInfo.getUserEmail());
+        if(userInfo.getUserEmail().equals("null"))
+            email.setText("-");
+        email.setTypeface(font);
+        emailLabel.setTypeface(font);
+
+        phoneLabel = (TextView)view.findViewById(R.id.phoneLabel);
+        phone = (TextView)view.findViewById(R.id.phone);
+        phone.setTypeface(font);
+        phoneLabel.setTypeface(font);
+        phone.setText(userInfo.getUserPhone());
+
+        if(userInfo.getUserPhone().equals("null"))
+            phone.setText("-");
+
 
         return view;
     }

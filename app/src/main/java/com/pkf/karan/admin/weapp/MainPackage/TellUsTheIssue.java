@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pkf.karan.admin.weapp.R;
+import com.pkf.karan.admin.weapp.UserInformation;
 
 import java.io.IOException;
 
@@ -34,11 +35,15 @@ public class TellUsTheIssue extends AppCompatActivity {
     EditText remark;
     String rejectionType, userId, entityId, reason, remarks;
     ProgressBar progressBar;
+    UserInformation userInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tell_us_the_issue);
+        userInfo = (UserInformation)getApplicationContext();
+
         rejectionType = getIntent().getStringExtra("rejectionType");
         userId = getIntent().getStringExtra("userId");
         entityId = getIntent().getStringExtra("entityId");
@@ -148,7 +153,7 @@ public class TellUsTheIssue extends AppCompatActivity {
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/AllocationApi/RejectDailyAllocation")
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/RejectDailyAllocation")
                 .post(body)
                 .build();
 
@@ -167,12 +172,26 @@ public class TellUsTheIssue extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+                final String responseString = response.body().string();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getApplicationContext(), "Request submitted successfully", Toast.LENGTH_SHORT).show();
-                        TellUsTheIssue.this.finish();
+
+                        if(responseString.equals("true"))
+                        {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "You have already submitted a request.", Toast.LENGTH_SHORT).show();
+                            TellUsTheIssue.this.finish();
+                        }
+
+                        else
+                        {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "Request submitted successfully", Toast.LENGTH_SHORT).show();
+                            TellUsTheIssue.this.finish();
+                        }
+
+
                     }
                 });
             }

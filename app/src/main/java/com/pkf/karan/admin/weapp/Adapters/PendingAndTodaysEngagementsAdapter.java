@@ -60,7 +60,7 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
     String type;
     List<EngagementData> data;
     EngagementData current;
-    String startDate, startTime, endDate, endTime, allocDate, allocTime;
+    String startDate = "", startTime, endDate = "", endTime, allocDate, allocTime;
     String dailyAllocationId;
     Boolean isCardExpanded = false;
     Typeface font;
@@ -73,11 +73,12 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
     Boolean isHappy = false;
     LinearLayout noEngagementsView;
     RecyclerView recyclerView;
+    TextView status;
+    String employeeStatus;
 
 
 
-
-    public PendingAndTodaysEngagementsAdapter(Context context, List<EngagementData> data, String type, ProgressBar progressBar, FloatingActionButton mFloatingActionButton, LinearLayout noengagementsView, RecyclerView recyclerView){
+    public PendingAndTodaysEngagementsAdapter(Context context, List<EngagementData> data, String type, ProgressBar progressBar, FloatingActionButton mFloatingActionButton, LinearLayout noengagementsView, RecyclerView recyclerView, TextView status){
         this.context=context;
         inflater= LayoutInflater.from(context);
         this.type = type;
@@ -86,6 +87,7 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
         this.noEngagementsView = noengagementsView;
         this.recyclerView = recyclerView;
         this.mFab = mFloatingActionButton;
+        this.status = status;
     }
 
 
@@ -149,22 +151,35 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
         myHolder.clientName.setText("Client name: " + current.ClientName);
         myHolder.clientName.setTypeface(font);
 
-        Calendar c3 = Calendar.getInstance();
-        c3.setTimeInMillis(Long.parseLong(current.allocDate.substring(current.allocDate.indexOf("(")+1,current.allocDate.indexOf(")"))));  //here your time in miliseconds
-        allocDate = "" + c3.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(c3.get(Calendar.MONTH)))+1) + "/" + c3.get(Calendar.YEAR);
-        allocTime = "" + c3.get(Calendar.HOUR_OF_DAY) + ":" + c3.get(Calendar.MINUTE) + ":" + c3.get(Calendar.SECOND);
-        myHolder.allocationDate.setText("Allocation date: " + allocDate);
-        myHolder.allocationDate.setTypeface(font);
+
+        if(!current.allocDate.equals("null"))
+        {
+            Calendar c3 = Calendar.getInstance();
+            c3.setTimeInMillis(Long.parseLong(current.allocDate.substring(current.allocDate.indexOf("(")+1,current.allocDate.indexOf(")"))));  //here your time in miliseconds
+            allocDate = "" + c3.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(c3.get(Calendar.MONTH)))+1) + "/" + c3.get(Calendar.YEAR);
+            allocTime = "" + c3.get(Calendar.HOUR_OF_DAY) + ":" + c3.get(Calendar.MINUTE) + ":" + c3.get(Calendar.SECOND);
+            myHolder.allocationDate.setText("Allocation date: " + allocDate);
+            myHolder.allocationDate.setTypeface(font);
+        }
 
 
-        Calendar cl = Calendar.getInstance();
-        cl.setTimeInMillis(Long.parseLong(current.StartDate.substring(current.StartDate.indexOf("(")+1,current.StartDate.indexOf(")"))));  //here your time in miliseconds
-        startDate = "" + cl.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(cl.get(Calendar.MONTH)))+1) + "/" + cl.get(Calendar.YEAR);
-        startTime = "" + cl.get(Calendar.HOUR_OF_DAY) + ":" + cl.get(Calendar.MINUTE) + ":" + cl.get(Calendar.SECOND);
-        Calendar c2 = Calendar.getInstance();
-        c2.setTimeInMillis(Long.parseLong(current.EndDate.substring(current.EndDate.indexOf("(")+1,current.EndDate.indexOf(")"))));  //here your time in miliseconds
-        endDate = "" + c2.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(c2.get(Calendar.MONTH)))+1) + "/" + c2.get(Calendar.YEAR);
-        endTime = "" + c2.get(Calendar.HOUR_OF_DAY) + ":" + c2.get(Calendar.MINUTE) + ":" + c2.get(Calendar.SECOND);
+        if(!current.StartDate.equals("null"))
+        {
+            Calendar cl = Calendar.getInstance();
+            cl.setTimeInMillis(Long.parseLong(current.StartDate.substring(current.StartDate.indexOf("(")+1,current.StartDate.indexOf(")"))));  //here your time in miliseconds
+            startDate = "" + cl.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(cl.get(Calendar.MONTH)))+1) + "/" + cl.get(Calendar.YEAR);
+            startTime = "" + cl.get(Calendar.HOUR_OF_DAY) + ":" + cl.get(Calendar.MINUTE) + ":" + cl.get(Calendar.SECOND);
+        }
+
+        if(!current.EndDate.equals("null"))
+        {
+            Calendar c2 = Calendar.getInstance();
+            c2.setTimeInMillis(Long.parseLong(current.EndDate.substring(current.EndDate.indexOf("(")+1,current.EndDate.indexOf(")"))));  //here your time in miliseconds
+            endDate = "" + c2.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(Integer.parseInt(String.valueOf(c2.get(Calendar.MONTH)))+1) + "/" + c2.get(Calendar.YEAR);
+            endTime = "" + c2.get(Calendar.HOUR_OF_DAY) + ":" + c2.get(Calendar.MINUTE) + ":" + c2.get(Calendar.SECOND);
+        }
+
+
         myHolder.duration.setText(startDate + " - " + endDate);
         myHolder.duration.setTypeface(font);
 
@@ -292,7 +307,7 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/AllocationApi/UpdateDailyAllocationDetails")
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/UpdateDailyAllocationDetails")
                 .post(body)
                 .build();
 
@@ -324,7 +339,6 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
                     }
                 });
 
-
             }
         });
 
@@ -332,18 +346,19 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
     }
 
     private void LoadData(final String type) {
+
         data.clear();
 
         OkHttpClient client = new OkHttpClient();
 
         if(type.equals("today"))
         {
-            url = "http://13.127.11.204:10002/api/HomeApi/GetTodaysAllocation" + "?" + "empId=" + userInfo.getUserId();
+            url = userInfo.getServerUrl()+"/api/HomeApi/GetTodaysAllocation" + "?" + "empId=" + userInfo.getUserId();
         }
 
         else
         {
-            url = "http://13.127.11.204:10002/api/HomeApi/GetPendingAllocations" + "?" + "empId=" + userInfo.getUserId();
+            url = userInfo.getServerUrl()+"/api/HomeApi/GetPendingAllocations" + "?" + "empId=" + userInfo.getUserId();
         }
 
         Request request = new Request.Builder()
@@ -374,12 +389,10 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
                             mFab.setImageResource(R.drawable.ic_action_happy);
                         }
                     });
-
                 }
 
                 else
                 {
-
 
                     ((EngagementsActivity)context).runOnUiThread(new Runnable() {
                         @Override
@@ -401,7 +414,19 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
                                     engagementData.allocDate = allotmentObj.getString("AllocationDate");
                                     engagementData.dailyAllocationId = allotmentObj.getString("DailyAllocationId");
                                     engagementData.status = allotmentObj.getString("Status");
-                                    data.add(engagementData);
+                                    employeeStatus = engagementData.ClientLocation;
+
+                                    if(engagementData.ClientLocation.equals("") | engagementData.ClientLocation.equals("Client") | engagementData.ClientLocation.equals("Office"))
+                                    {
+                                        engagementData.ClientLocation = "Active";
+                                        employeeStatus = "Active";
+                                        status.setText(employeeStatus);
+                                    }
+
+                                    if(!engagementData.EngagementTitle.equals(""))
+                                    {
+                                        data.add(engagementData);
+                                    }
                                 }
 
                                 if(type.equals("today"))

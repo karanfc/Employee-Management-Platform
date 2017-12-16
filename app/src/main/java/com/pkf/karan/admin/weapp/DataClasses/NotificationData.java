@@ -6,8 +6,9 @@ package com.pkf.karan.admin.weapp.DataClasses;
 
 public class NotificationData {
 
-    public String notificationTitle;
     public String timeStamp;
     public String description;
+    public String notifType;
+    public Boolean isNotifRead;
 
 }

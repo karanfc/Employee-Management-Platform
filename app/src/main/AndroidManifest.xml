@@ -26,9 +26,13 @@
             android:label="Engagements"
             android:parentActivityName=".LoginActivity"
             android:theme="@style/MyMaterialTheme" />
-        <activity android:name=".MainPackage.TellUsTheIssue"
+        <activity
+            android:name=".MainPackage.TellUsTheIssue"
             android:label="Tell us the issue"
-            android:parentActivityName=".MainPackage.EngagementsActivity"></activity>
+            android:parentActivityName=".MainPackage.EngagementsActivity" />
+        <activity android:name=".MainPackage.FAQActivity"
+            android:parentActivityName=".MainPackage.EngagementsActivity"
+            android:label="FAQs"></activity>
     </application>
 
 </manifest>

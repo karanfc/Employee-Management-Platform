@@ -220,7 +220,7 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/AllocationApi/AcceptUpcomingAllocation")
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/AcceptUpcomingAllocation")
                 .post(body)
                 .build();
 
@@ -257,7 +257,7 @@ public class UpcomingEngagementsAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
         Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/HomeApi/GetUpcomingAllocations" + "?" + "empId=" + userInfo.getUserId())
+                .url(userInfo.getServerUrl()+"/api/HomeApi/GetUpcomingAllocations" + "?" + "empId=" + userInfo.getUserId())
                 .build();
 
 

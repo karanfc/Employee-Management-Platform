@@ -1,9 +1,16 @@
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.pkf.karan.admin.weapp.Fragments.NotificationsFragment">
+    tools:context="com.pkf.karan.admin.weapp.Fragments.AskForAllotmentsFragment">
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -12,28 +19,63 @@
         android:background="?attr/colorPrimary"
         app:layout_scrollFlags="scroll|enterAlways"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="#ffffff"
         android:elevation="4dp"
-        app:titleTextColor="#ffffff"/>
+        />
 
     <android.support.v7.widget.RecyclerView
         android:layout_below="@id/toolbar"
         android:id="@+id/notificationRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floating_action_button"
+        android:id="@+id/floating_action_button_filter"
+        android:src="@drawable/ic_action_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_filter"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
-        app:fabSize="normal" />
+        />
 
+    <RelativeLayout
+        android:layout_below="@id/toolbar"
+        android:visibility="gone"
+        android:id="@+id/noNotificationsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAllCaps="true">
+
+        <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/noEngagementsTitle"
+            android:text="no notifications"
+            android:textAllCaps="true"
+            android:layout_margin="8dp"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+    </RelativeLayout>
+
+
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>
+
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>

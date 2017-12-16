@@ -237,7 +237,7 @@ public class UpcomingFragment extends Fragment {
 
 
         final Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/AllocationApi/AskForAllocation")
+                .url(userInfo.getServerUrl()+"/api/AllocationApi/AskForAllocation")
                 .post(body)
                 .build();
 
@@ -325,7 +325,7 @@ public class UpcomingFragment extends Fragment {
 
 
         Request request = new Request.Builder()
-                .url("http://13.127.11.204:10002/api/HomeApi/GetUpcomingAllocations" + "?" + "empId=" + empId)
+                .url(userInfo.getServerUrl()+"/api/HomeApi/GetUpcomingAllocations" + "?" + "empId=" + empId)
                 .build();
 
 
