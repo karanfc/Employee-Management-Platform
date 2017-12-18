@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="330dp"
+        android:layout_height="wrap_content"
         android:layout_margin="18dp"
         android:background="#AA424242"
         android:orientation="vertical">
@@ -69,12 +69,12 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/button_signin"
             android:id="@+id/radioGroup"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp">
 
             <RadioButton
                 android:id="@+id/clientRadio"
@@ -92,9 +92,40 @@
                 android:textColor="#fff"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/colorPrimary"
-                android:text="ACS"/>
+                android:text="TESTSERVER"/>
 
         </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/rememberMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remember me"
+            android:checked="true"
+            android:textColor="#fff"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@id/radioGroup"
+            android:layout_marginBottom="16dp"
+            android:layout_centerHorizontal="true"
+            />
+
+        <TextView
+            android:id="@+id/forgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:textColor="#fff"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@id/rememberMe"
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            />
+
+
 
     </RelativeLayout>
 

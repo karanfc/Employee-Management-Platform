@@ -420,7 +420,7 @@ public class PendingAndTodaysEngagementsAdapter extends RecyclerView.Adapter<Rec
                                     {
                                         engagementData.ClientLocation = "Active";
                                         employeeStatus = "Active";
-                                        status.setText(employeeStatus);
+                                        status.setText("Employee Status: " + employeeStatus);
                                     }
 
                                     if(!engagementData.EngagementTitle.equals(""))

@@ -14,6 +14,15 @@ public class UserInformation extends Application {
     String userEmail;
     Boolean hasRejected = false;
     String serverUrl;
+    String deviceId;
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
     public String getServerUrl() {
         return serverUrl;

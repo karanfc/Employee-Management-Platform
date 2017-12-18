@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ import com.pkf.karan.admin.weapp.MainPackage.EngagementsActivity;
 import com.pkf.karan.admin.weapp.MainPackage.FAQActivity;
 import com.pkf.karan.admin.weapp.R;
 import com.pkf.karan.admin.weapp.UserInformation;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +71,8 @@ public class AskForAllotmentsFragment extends Fragment {
     UserInformation userInfo;
     private ProgressBar progressBar;
 
+    TextView subtitle;
+    EditText remark;
 
 
 
@@ -115,6 +120,12 @@ public class AskForAllotmentsFragment extends Fragment {
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
+        subtitle = (TextView)view.findViewById(R.id.subtitle);
+        remark = (EditText)view.findViewById(R.id.remark);
+
+        subtitle.setTypeface(font);
+        remark.setTypeface(font);
+
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
@@ -139,6 +150,7 @@ public class AskForAllotmentsFragment extends Fragment {
         });
 
         askForAllotment = (Button)view.findViewById(R.id.askForAllocation);
+        askForAllotment.setTypeface(font);
         askForAllotment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

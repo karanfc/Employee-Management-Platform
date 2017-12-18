@@ -2,6 +2,7 @@ package com.pkf.karan.admin.weapp.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pkf.karan.admin.weapp.Adapters.NotificationsAdapter;
@@ -72,6 +74,8 @@ public class NotificationsFragment extends Fragment{
     RelativeLayout noNotificationsLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
+    TextView noNotificationsTitle;
+    Typeface font;
 
 
     final List<NotificationData> data=new ArrayList<>();
@@ -116,8 +120,14 @@ public class NotificationsFragment extends Fragment{
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
+        userInfo = (UserInformation)getActivity().getApplicationContext();
+        font = Typeface.createFromAsset(getActivity().getAssets(),  "fonts/OpenSans-Regular.ttf");
+
         noNotificationsLayout = (RelativeLayout)view.findViewById(R.id.noNotificationsLayout);
         noNotificationsLayout.setVisibility(View.GONE);
+
+        noNotificationsTitle = (TextView)view.findViewById(R.id.noNotificationsTitle);
+        noNotificationsTitle.setTypeface(font);
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setRefreshing(false);

@@ -83,25 +83,51 @@
                                 android:textSize="14sp"
                                 android:layout_marginLeft="8dp"
                                 android:layout_marginRight="8dp"
-                                android:layout_marginBottom="16dp" />
+                                android:layout_marginBottom="4dp" />
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/status_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp">
 
                             <TextView
                                 android:id="@+id/employee_status"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Employee Status:"
-                                android:textSize="14sp"
+                                android:layout_gravity="center_vertical"
+                                android:textSize="16sp"
                                 android:textColor="#000"
                                 android:layout_marginLeft="8dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginBottom="16dp" />
+                                android:layout_marginRight="8dp" />
+
+                            <LinearLayout
+                                android:id="@+id/statusOptions"
+                                android:layout_width="0dp"
+                                android:orientation="horizontal"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:gravity="end">
+
+
+                                <ImageButton
+                                    android:id="@+id/confirm"
+                                    android:src="@drawable/ic_action_confirm"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="#fff"/>
+
+                                <ImageButton
+                                    android:id="@+id/reject"
+                                    android:src="@drawable/ic_action_reject"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="#fff"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -149,7 +175,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:textAllCaps="true">
+                        android:textAllCaps="true"
+                        android:layout_marginBottom="32dp">
 
                         <TextView
                             android:id="@+id/noEngagementsTitle"

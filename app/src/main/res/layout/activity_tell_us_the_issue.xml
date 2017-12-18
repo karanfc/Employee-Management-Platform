@@ -114,22 +114,74 @@
             android:layout_marginBottom="4dp">
 
             <CheckBox
-                android:id="@+id/engagementType"
+                android:id="@+id/bench"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:buttonTint="@color/colorPrimary"/>
 
             <TextView
-                android:id="@+id/engagmentTypeTitle"
+                android:id="@+id/benchTitle"
                 android:layout_marginStart="32dp"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:text="Type of Engagment"
+                android:text="Bench"
                 android:textSize="16sp"
                 />
 
         </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="4dp">
+
+                <CheckBox
+                    android:id="@+id/Holiday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:buttonTint="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/holidayTitle"
+                    android:layout_marginStart="32dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Holiday"
+                    android:textSize="16sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="4dp">
+
+                <CheckBox
+                    android:id="@+id/engagementType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:buttonTint="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/engagmentTypeTitle"
+                    android:layout_marginStart="32dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="Type of Engagment"
+                    android:textSize="16sp"
+                    />
+
+            </LinearLayout>
 
     <TextView
         android:id="@+id/subtitle"

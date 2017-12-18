@@ -28,8 +28,8 @@ import okhttp3.Response;
 
 public class TellUsTheIssue extends AppCompatActivity {
 
-    CheckBox startDate, endDate, clientLocation, engagementType;
-    TextView title, subtitle, startDateTitle, endDateTitle, clientLocationTitle, engagementTypeTitle;
+    CheckBox startDate, endDate, clientLocation, engagementType, bench, holiday;
+    TextView title, subtitle, startDateTitle, endDateTitle, clientLocationTitle, engagementTypeTitle, benchTitle, holidayTitle;
     Button send;
     Typeface font;
     EditText remark;
@@ -63,6 +63,8 @@ public class TellUsTheIssue extends AppCompatActivity {
         endDate = (CheckBox)findViewById(R.id.endDate);
         clientLocation = (CheckBox)findViewById(R.id.clientLocation);
         engagementType = (CheckBox)findViewById(R.id.engagementType);
+        bench = (CheckBox)findViewById(R.id.bench);
+        holiday = (CheckBox)findViewById(R.id.Holiday);
 
         title = (TextView)findViewById(R.id.title);
         title.setTypeface(font);
@@ -82,6 +84,12 @@ public class TellUsTheIssue extends AppCompatActivity {
         engagementTypeTitle = (TextView)findViewById(R.id.engagmentTypeTitle);
         engagementTypeTitle.setTypeface(font);
 
+        benchTitle = (TextView)findViewById(R.id.benchTitle);
+        benchTitle.setTypeface(font);
+
+        holidayTitle = (TextView)findViewById(R.id.holidayTitle);
+        holidayTitle.setTypeface(font);
+
         send = (Button)findViewById(R.id.send);
         send.setTypeface(font);
 
@@ -91,7 +99,7 @@ public class TellUsTheIssue extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(startDate.isChecked() | endDate.isChecked() | clientLocation.isChecked() | engagementType.isChecked() && remark.getText().length() > 0)
+                if(startDate.isChecked() | endDate.isChecked() | clientLocation.isChecked() | engagementType.isChecked() | bench.isChecked() | holiday.isChecked() && remark.getText().length() > 0)
                 {
                     remarks = remark.getText().toString();
                     reason = "";
@@ -99,6 +107,8 @@ public class TellUsTheIssue extends AppCompatActivity {
                     if(endDate.isChecked())   reason = reason + "End Date,";
                     if(clientLocation.isChecked())   reason = reason + "Client Location,";
                     if(engagementType.isChecked())   reason = reason + "Type Of Engagement,";
+                    if(bench.isChecked())   reason = reason + "Bench,";
+                    if(holiday.isChecked()) reason = reason + "Holiday,";
                     reason = reason.substring(0, reason.length()-1);
                     Log.e("reason", reason);
 
